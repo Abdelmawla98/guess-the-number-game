@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body{
+            background: gray;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .game-window{
+            margin: 100px auto;
+            background: orchid;
+            max-width: 60%;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .game-window input{
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+            border: 1px solid gray;
+            font-size: 20px;
+            max-width: 50%;
+            font-weight: bold;
+        }
+        .game-window input:disabled{
+            cursor: no-drop;
+        }
+        .input-container{
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .game-window h1:nth-of-type(2){
+            display: none;
+            color: blue;
+            text-align: center;
+            transition: visibility 1s;
+        }
+        .game-window h1:nth-of-type(2)[data-status= "correct"]{
+            color: green;
+        }
+        .game-window h1:nth-of-type(2)[data-status= "incorrect"]{
+            color: red;
+        }
+        .game-window h1:nth-of-type(2)[data-status= "reset"]{
+            color: blue;
+        }
+        .game-window h1:last-of-type{
+            color:brown;
+            display: none;
+        }
+        .reset-button{
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+            border: 1px solid gray;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="game-window">
+        <h1>Enter a number between 1 to 50</h1>
+        <div class="input-container">
+            <input type="text">
+            <input type="submit" name="" id="">
+        </div>
+        <h1>message</h1>
+        <h1>result</h1>
+        <button class="reset-button">Reset</button>
+    </div>
+    <script>
+        let computerNum = 0;
+        let userNum = 0;
+        let result = {
+            right: 0,
+            wrong:0,
+        }
+        let inputNum = document.getElementsByTagName("input")[0];
+        let submitBtn = document.getElementsByTagName("input")[1];
+        let text = document.querySelector(".game-window h1:nth-of-type(2)");
+        let resultStatement = document.querySelector(".game-window h1:last-of-type");
+        let resetBtn = document.querySelector(".reset-button");
+        generateRandomNumber();
+        submitBtn.addEventListener("click", comparison);
+
+        function comparison(){
+            if (!inputValidation()) return;
+            gettingInput();
+            console.log(computerNum);
+            if(userNum > computerNum){
+                text.dataset.status = "incorrect";
+                displayText("you picked a greater number !");
+                result.wrong++;
+                displayResult();
+            console.log(`your number is ${userNum} and computer ${computerNum}`);
+        }
+       else if(userNum < computerNum){
+                text.dataset.status = "incorrect";
+                displayText("Your guess is lower than the target.");
+                result.wrong++;
+                displayResult();
+            console.log(`your number is ${userNum} and computer ${computerNum}`);
+        }
+        else{
+            displayText(`great, you picked the right one after ${result.wrong} try`);
+                text.dataset.status = "correct";
+                result.right++;
+                displayResult();
+                submitBtn.style.opacity = ".3";
+                submitBtn.disabled = true;
+            console.log(`your number is ${userNum} and computer ${computerNum}`); 
+                     
+        }
+        text.style.display = "block";
+        resultStatement.style.display = "block";
+        text.style.visibility = "visible";  
+    }
+    resetBtn.addEventListener("click", (e)=>{
+        resetGame();
+    })
+        function generateRandomNumber(){
+            computerNum = Math.floor(Math.random()*50);
+        }
+       function gettingInput(){
+        userNum = Number(inputNum.value);
+        inputNum.value = "";
+       }
+      function displayText(input){
+        text.innerText = input;    
+      }
+      function displayResult(){
+        resultStatement.innerText = `result is:
+        right: ${result.right}, wrong: ${result.wrong}.`;
+      }
+      function inputValidation(){
+        if (inputNum.value.trim() === "") {
+        displayText("You must enter a number to start playing!");
+        text.style.display = "block";
+        return false;
+    }
+        const num = Number(inputNum.value);
+        if (isNaN(num) || num < 1 || num > 50) {
+            displayText("Enter a valid number between 1 and 50!");
+            text.style.display = "block";
+            return false;
+        }
+        return true;
+      }
+      function resetGame(){
+        computerNum = 0;
+        userNum = 0;
+        result = {
+            right: 0,
+            wrong:0,
+        }
+        displayText("Game reset");
+        setTimeout(()=>{
+            text.style.visibility = "hidden";  
+        },3000);
+        text.dataset.status = "reset";
+        resultStatement.style.display = "none";
+        submitBtn.style.opacity = "1";
+        submitBtn.disabled = false;
+        generateRandomNumber();
+      }
+    </script>
+</body>
+</html>
